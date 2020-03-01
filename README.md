@@ -1,5 +1,7 @@
 # twitter-scraper-elasticsearch
 
+Scrapper les tweets selon des mots clés entre deux dates, puis les afficher sur une heatmap avec kibana selon les pays et les villes concernés par ces tweets.
+
 ## Pré-requis
 
 kibana, elasticsearch, python3 ( avec pip )
