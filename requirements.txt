@@ -1,0 +1,7 @@
+Elasticsearch
+geopy
+spacy
+bs4
+billiard
+coala_utils
+lxml
