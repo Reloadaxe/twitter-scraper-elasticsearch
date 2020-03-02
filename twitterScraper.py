@@ -1,4 +1,4 @@
-from twitter_scraper import query_tweets
+from twitterscraper import query_tweets
 import datetime as dt
 from elasticsearch import Elasticsearch
 import spacy
@@ -54,8 +54,9 @@ if __name__ == '__main__':
         end_date = dt.date(end_year, end_month, end_day)
     else:
         end_date = dt.date.today()
-    print("Début de la recherche..")
-    tweets = query_tweets(keyword + " -filter:replies filter:verified", None, dt.date(start_year, start_month, start_day), end_date)
+    start_date = dt.date(start_year, start_month, start_day)
+    print("Début de la recherche de '"+keyword+"' du " + str(start_date) + " au " + str(end_date))
+    tweets = query_tweets(keyword + " -filter:replies filter:verified", None, start_date, end_date)
     for tweet in tweets:
         cities = findCitiesAndCountriesInText(tweet.text)
         cityId = 0
