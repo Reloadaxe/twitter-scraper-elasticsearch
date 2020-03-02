@@ -4,6 +4,12 @@ from elasticsearch import Elasticsearch
 import spacy
 from geopy.geocoders import Nominatim
 
+class TextColors:
+    red = '\033[91m'
+    green = '\033[92m'
+    yellow = '\033[93m'
+    reset = '\033[0m'
+
 def findCitiesAndCountriesInText(text):
     cities = []
     nlp = spacy.load("xx_ent_wiki_sm")
@@ -55,10 +61,15 @@ if __name__ == '__main__':
     else:
         end_date = dt.date.today()
     start_date = dt.date(start_year, start_month, start_day)
-    print("Début de la recherche de '"+keyword+"' du " + str(start_date) + " au " + str(end_date))
+    print(TextColors.green + "Début de la recherche de '"+keyword+"' du " + str(start_date) + " au " + str(end_date) + TextColors.reset)
     tweets = query_tweets(keyword + " -filter:replies filter:verified", None, start_date, end_date)
+    print(TextColors.green + "Tous les tweets ont été récupérés\nDébut de l'insertion dans elasticsearch.." + TextColors.reset)
+    tweetsDone = 1
     for tweet in tweets:
+        print(TextColors.yellow + str(tweetsDone) + " / " + str(len(tweets)) + TextColors.reset)
         cities = findCitiesAndCountriesInText(tweet.text)
+        if not cities:
+            print(TextColors.red + "Aucune ville trouvée" + TextColors.reset)
         cityId = 0
         for city in cities:
             position = convertCityToPosition(city)
@@ -74,4 +85,7 @@ if __name__ == '__main__':
                 tweetsAdded += 1
                 cityId += 1
                 res = es.index(index="informations", id=tweet.tweet_id + "__" + str(cityId), body=information)
-    print("Number of tweets added in elasticSearch : " + str(tweetsAdded))
+            else:
+                print(TextColors.red + "Aucune position trouvée pour '"+city+"'" + TextColors.reset)
+        tweetsDone += 1
+    print(TextColors.green + "Nombre de tweets ajoutés dans ElasticSearch : " + str(tweetsAdded) + TextColors.reset)
